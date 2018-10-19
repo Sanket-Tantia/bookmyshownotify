@@ -30,7 +30,7 @@ def getAvailableMovies():
 	try:
 	    file = open("notified_movies.txt", "w")
 	except IOError:
-	    print "Could not open file! Please close it!"
+	    print ("Could not open file! Please close it!")
 
 	acceptableVenues = ['PVR: Inorbit, Cyberabad','PVR ICON: Hitech, Madhapur, Hyderabad','PVR Forum Sujana Mall: Kukatpally, Hyderabad']
 
@@ -79,5 +79,5 @@ def getAvailableMovies():
 	print(datetime.datetime.now())
 
 scheduler = BlockingScheduler()
-scheduler.add_job(getAvailableMovies, 'interval', hours=4)
+scheduler.add_job(getAvailableMovies, 'interval', minutes=20)
 scheduler.start()
