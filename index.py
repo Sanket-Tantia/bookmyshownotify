@@ -79,5 +79,5 @@ def getAvailableMovies():
 	print(datetime.datetime.now())
 
 scheduler = BlockingScheduler()
-scheduler.add_job(getAvailableMovies, 'interval', minutes=20)
+scheduler.add_job(getAvailableMovies, 'interval', hours=2)
 scheduler.start()
