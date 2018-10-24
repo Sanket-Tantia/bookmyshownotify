@@ -10,23 +10,23 @@ app = Flask(__name__)
 
 @app.route('/')
 def getAvailableMovies():
-	parsed_movies={}
-	try:
-	    file = open("./notified_movies.txt", "r")
-	except IOError:
-	    print "Could not open file! Please close it!"
+	# parsed_movies={}
+	# try:
+	#     file = open("./notified_movies.txt", "r")
+	# except IOError:
+	#     print "Could not open file! Please close it!"
 
-	parsed_movies = file.read()
-	file.close()
-	if len(parsed_movies)==0:
-		parsed_movies = {'sample':[12,20]}
-	else:
-		parsed_movies = eval(parsed_movies)
+	# parsed_movies = file.read()
+	# file.close()
+	# if len(parsed_movies)==0:
+	# 	parsed_movies = {'sample':[12,20]}
+	# else:
+	# 	parsed_movies = eval(parsed_movies)
 
-	print parsed_movies
+	# print parsed_movies
 
-	res = requests.get('https://in.bookmyshow.com/hyderabad/movies')
-	print(res.status_code)
+	# res = requests.get('https://in.bookmyshow.com/hyderabad/movies')
+	# print(res.status_code)
 
 	acceptableVenues = ['PVR: Inorbit, Cyberabad','PVR ICON: Hitech, Madhapur, Hyderabad','PVR Forum Sujana Mall: Kukatpally, Hyderabad']
 
