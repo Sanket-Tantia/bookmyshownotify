@@ -4,7 +4,7 @@ import datetime
 import time
 from flask import Flask
 # import way2sms
-from apscheduler.schedulers.blocking import BlockingScheduler
+# from apscheduler.schedulers.blocking import BlockingScheduler
 
 app = Flask(__name__)
 
@@ -83,5 +83,5 @@ def getAvailableMovies():
 # scheduler = BlockingScheduler()
 # scheduler.add_job(getAvailableMovies, 'interval', minutes=2)
 # scheduler.start()
-# if __name__ == '__main__':
-#     app.run(port=4995)
+if __name__ == '__main__':
+	app.run()
