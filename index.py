@@ -79,7 +79,7 @@ def getAvailableMovies():
 	# 	file.write(str(parsed_movies))
 	# 	file.close()
 	# 	print message	
-	return "message"
+	return "message1"
 # scheduler = BlockingScheduler()
 # scheduler.add_job(getAvailableMovies, 'interval', minutes=2)
 # scheduler.start()
