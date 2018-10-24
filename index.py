@@ -2,21 +2,22 @@ import requests
 from bs4 import BeautifulSoup
 import datetime
 import time
+from flask import Flask
 # import way2sms
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+app = Flask(__name__)
 
-def sendMsgUpdate(message):
-	print len(message);
-
-
+@app.route('/')
 def getAvailableMovies():
+	parsed_movies={}
 	try:
-	    file = open("notified_movies.txt", "r")
+	    file = open("./notified_movies.txt", "r")
 	except IOError:
 	    print "Could not open file! Please close it!"
 
 	parsed_movies = file.read()
+	file.close()
 	if len(parsed_movies)==0:
 		parsed_movies = {'sample':[12,20]}
 	else:
@@ -26,11 +27,6 @@ def getAvailableMovies():
 
 	res = requests.get('https://in.bookmyshow.com/hyderabad/movies')
 	print(res.status_code)
-	file.close()
-	try:
-	    file = open("notified_movies.txt", "w")
-	except IOError:
-	    print ("Could not open file! Please close it!")
 
 	acceptableVenues = ['PVR: Inorbit, Cyberabad','PVR ICON: Hitech, Madhapur, Hyderabad','PVR Forum Sujana Mall: Kukatpally, Hyderabad']
 
@@ -42,12 +38,16 @@ def getAvailableMovies():
 			if movie["data-language-filter"] == '|Hindi' or movie["data-language-filter"] == '|English':
 				eachMovieRes = requests.get('https://in.bookmyshow.com'+movie.a["href"])
 				eachMovieSoup = BeautifulSoup(eachMovieRes.text,features="html.parser")
-				percentage = eachMovieSoup.find("span",{"class":"__percentage"}).text
+				try:
+					percentage = eachMovieSoup.find("span",{"class":"__percentage"}).text
+				except:
+					percentage = '10%' #new movie
 				if int(percentage[0:-1])>84:
 					eachMovieDateRes = requests.get('https://in.bookmyshow.com'+eachMovieSoup.find("div",{"class":"more-showtimes"}).a["href"])
 					eachMovieDateSoup = BeautifulSoup(eachMovieDateRes.text,features="html.parser")
 					allDates = eachMovieDateSoup.find("ul",{"id":"showDates"}).findAll("li")
 					for eachDate in allDates:
+						# print eachDate.a["href"]
 						eachMovieDateTmeRes = requests.get('https://in.bookmyshow.com'+eachDate.a["href"])
 						eachMovieDateTimeSoup = BeautifulSoup(eachMovieDateTmeRes.text,features="html.parser")
 						allVenues = eachMovieDateTimeSoup.find("ul",{"id":"venuelist"}).findAll("li")
@@ -72,12 +72,16 @@ def getAvailableMovies():
 												message += str(movie.h4.text)+" "+str(eachDate.a.div.text[0:2])+" "+str(eachVenue["data-name"][0:10])+" "+str(eachTime.a["data-display-showtime"]+", ")
 												parsed_movies[str(movie.h4.text)] = [str(eachDate.a.div.text[0:2])]
 									# file.write(movie.h4.text+eachDate.a.div.text[0:2]+eachVenue["data-name"]+eachTime.a["data-display-showtime"]+",")
-		
+		try:
+		    file = open("./notified_movies.txt", "w")
+		except IOError:
+		    print ("Could not open file! Please close it!")
 		file.write(str(parsed_movies))
-		sendMsgUpdate(message)
-	file.close()
-	print(datetime.datetime.now())
-
-scheduler = BlockingScheduler()
-scheduler.add_job(getAvailableMovies, 'interval', hours=2)
-scheduler.start()
+		file.close()
+		print message	
+	return message
+# scheduler = BlockingScheduler()
+# scheduler.add_job(getAvailableMovies, 'interval', minutes=2)
+# scheduler.start()
+if __name__ == '__main__':
+    app.run(port=4995)
